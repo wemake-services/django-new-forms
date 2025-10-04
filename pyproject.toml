@@ -62,7 +62,7 @@ ruff = "^0.13"
 pytest = "^8.4"
 pytest-cov = "^7.0"
 pytest-django = "^4.11"
-pytest-randomly = "^3.16"
+pytest-randomly = "^4.0"
 
 [tool.poetry.group.docs]
 optional = true
