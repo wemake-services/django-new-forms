@@ -51,15 +51,17 @@ msgspec = [
 ]
 
 [tool.poetry.group.dev.dependencies]
-django = ">=4.2,<6.0" # TODO: python and django versions
+django = ">=4.2,<6.0"
 
 mypy = "^1.16"
+django-stubs = "^5.2.5"
 
 wemake-python-styleguide = "^1.1"
 ruff = "^0.11"
 
 pytest = "^8.4"
 pytest-cov = "^6.1"
+pytest-django = "^4.11"
 pytest-randomly = "^3.16"
 
 [tool.poetry.group.docs]
@@ -152,6 +154,9 @@ mccabe.max-complexity = 6
 pydocstyle.convention = "google"
 
 [tool.ruff.lint.per-file-ignores]
+# Allow import aliases without rename:
+"django_new_forms/backends/__init__.py" = ["PLC0414"]
+# Allow `assert`s in tests:
 "tests/*.py" = ["S101"]
 
 
