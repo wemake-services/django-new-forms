@@ -1,6 +1,6 @@
 import pytest
 
-from djnago_new_forms.example import some_function
+from django_new_forms.example import some_function
 
 
 @pytest.mark.parametrize(

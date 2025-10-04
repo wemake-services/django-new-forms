@@ -4,32 +4,54 @@ build-backend = "poetry.core.masonry.api"
 
 
 [project]
-name = "djnago-new-forms"
+name = "django-new-forms"
 description = "Django forms validation using additional backends"
-repository = "https://github.com/wemake-services/djnago-new-forms"
+repository = "https://github.com/wemake-services/django-new-forms"
 version = "0.1.0"
 requires-python = ">=3.10,<3.14"
 readme = "README.md"
 license = { text = "MIT" }
 dynamic = ["dependencies", "classifiers"]
 
-authors = []
+authors = [
+  { name = "Nikita Sobolev", email = "mail@sobolevn.me" },
+  { name = "Alexander Kondratev", email = "kondratev.av@inbox.ru"}
+]
 keywords = [
-  "wemake-python-package",
+  "django",
+  "forms",
+  "pydantic",
+  "msgspec",
 ]
 
 
 [tool.poetry]
 classifiers = [
   "Development Status :: 3 - Alpha",
+  "Environment :: Web Environment",
+  "Framework :: Django",
   "Intended Audience :: Developers",
   "Operating System :: OS Independent",
   "Topic :: Software Development :: Libraries :: Python Modules",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
 ]
 
 [tool.poetry.dependencies]
 
+[project.optional-dependencies]
+pydantic = [
+    "pydantic>=2.11.9",
+]
+msgspec = [
+    "msgspec>=0.19.0",
+]
+
 [tool.poetry.group.dev.dependencies]
+django = ">=4.2,<6.0" # TODO: python and django versions
+
 mypy = "^1.16"
 
 wemake-python-styleguide = "^1.1"
@@ -147,7 +169,7 @@ addopts = [
     # Output:
   "--tb=short",
   # Coverage:
-  "--cov=djnago_new_forms",
+  "--cov=django_new_forms",
   "--cov-report=term-missing:skip-covered",
   "--cov-report=html",
   "--cov-report=xml",

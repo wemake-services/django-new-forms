@@ -9,7 +9,7 @@ if "%SPHINXBUILD%" == "" (
 )
 set SOURCEDIR=.
 set BUILDDIR=_build
-set SPHINXPROJ=djnago-new-forms
+set SPHINXPROJ=django-new-forms
 set SPHINXOPTS=-W
 
 if "%1" == "" goto help

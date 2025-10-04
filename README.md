@@ -1,8 +1,8 @@
-# djnago-new-forms
+# django-new-forms
 
-[![test](https://github.com/wemake-services/djnago-new-forms/actions/workflows/test.yml/badge.svg?event=push)](https://github.com/wemake-services/djnago-new-forms/actions/workflows/test.yml)
-[![codecov](https://codecov.io/gh/wemake-services/djnago-new-forms/branch/master/graph/badge.svg)](https://codecov.io/gh/wemake-services/djnago-new-forms)
-[![Python Version](https://img.shields.io/pypi/pyversions/djnago-new-forms.svg)](https://pypi.org/project/djnago-new-forms/)
+[![test](https://github.com/wemake-services/django-new-forms/actions/workflows/test.yml/badge.svg?event=push)](https://github.com/wemake-services/django-new-forms/actions/workflows/test.yml)
+[![codecov](https://codecov.io/gh/wemake-services/django-new-forms/branch/master/graph/badge.svg)](https://codecov.io/gh/wemake-services/django-new-forms)
+[![Python Version](https://img.shields.io/pypi/pyversions/django-new-forms.svg)](https://pypi.org/project/django-new-forms/)
 [![wemake-python-styleguide](https://img.shields.io/badge/style-wemake-000000.svg)](https://github.com/wemake-services/wemake-python-styleguide)
 
 Django forms validation using additional backends
@@ -15,7 +15,7 @@ Django forms validation using additional backends
 ## Installation
 
 ```bash
-pip install djnago-new-forms
+pip install django-new-forms
 ```
 
 ## Example
@@ -23,7 +23,7 @@ pip install djnago-new-forms
 Showcase how your project can be used:
 
 ```python
-from djnago_new_forms.example import some_function
+from django_new_forms.example import some_function
 
 print(some_function(3, 4))
 # => 7
@@ -31,7 +31,7 @@ print(some_function(3, 4))
 
 ## License
 
-[MIT](https://github.com/wemake-services/djnago-new-forms/blob/master/LICENSE)
+[MIT](https://github.com/wemake-services/django-new-forms/blob/master/LICENSE)
 
 ## Credits
 
