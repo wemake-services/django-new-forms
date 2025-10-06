@@ -54,7 +54,7 @@ msgspec = [
 django = ">=4.2,<6.0"
 
 mypy = "^1.18"
-django-stubs = "^5.2.5"
+django-stubs = "^5.2.6"
 
 wemake-python-styleguide = "^1.4"
 ruff = "^0.13"
