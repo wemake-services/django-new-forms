@@ -23,10 +23,7 @@ pip install django-new-forms
 Showcase how your project can be used:
 
 ```python
-from django_new_forms.example import some_function
-
-print(some_function(3, 4))
-# => 7
+# TODO: add later!
 ```
 
 ## License
