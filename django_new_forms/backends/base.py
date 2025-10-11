@@ -18,6 +18,7 @@ class BaseBackend(abc.ABC):
     errors into Django form errors.
     """
 
+    # TODO: refactor
     def __init__(self, model_strict: bool) -> None:  # noqa: FBT001
         """Allow to pass model strict."""
         self.model_strict = model_strict

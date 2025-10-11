@@ -1,6 +1,6 @@
 from typing import ClassVar, Generic
 
-from django.forms.forms import BaseForm
+from django.forms import BaseForm
 from django.http import HttpRequest, HttpResponse
 from django.views.generic import View
 from django.views.generic.base import TemplateResponseMixin

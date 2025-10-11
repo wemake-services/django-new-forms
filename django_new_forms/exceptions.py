@@ -11,6 +11,7 @@ class ValidationBackendError(Exception):
     Django's form validation system.
     """
 
+    # TODO: refactor 
     def __init__(self, original_exc: Exception) -> None:
         """Allow to pass original exception."""
         self.original_exc = original_exc
