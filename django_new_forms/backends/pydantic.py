@@ -28,24 +28,28 @@ class PydanticBackend(BaseBackend):
     """
 
     @override
-    def validate(self, model_class: type[ModelT], form: BaseForm) -> ModelT:
+    def validate(
+        self,
+        model_class: type[ModelT],
+        form: BaseForm,
+    ) -> ModelT:
         """Validate form data against a Pydantic model."""
         try:
             return self._validate_data(model_class, form)
         except pydantic.ValidationError as exc:
-            raise ValidationBackendError from exc
+            raise ValidationBackendError(exc) from exc
 
     @override
     def attach_errors(
         self,
         form: forms.BaseForm,
-        exc: pydantic.ValidationError,
+        exc: ValidationBackendError,
         *,
-        include_url: bool = False,  # TODO: d
+        include_url: bool = False,  # TODO: handle params
         include_context: bool = False,
     ) -> None:
         """Attaches pydantic validation errors to Django forms."""
-        for err in exc.errors(
+        for err in exc.original_exc.errors(
             include_url=include_url,
             include_context=include_context,
         ):

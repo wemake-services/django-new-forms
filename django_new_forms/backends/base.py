@@ -3,6 +3,7 @@ from typing import Any
 
 from django.forms import BaseForm
 
+from django_new_forms.exceptions import ValidationBackendError
 from django_new_forms.typing import ModelT
 
 
@@ -17,8 +18,16 @@ class BaseBackend(abc.ABC):
     errors into Django form errors.
     """
 
+    def __init__(self, model_strict: bool) -> None:  # noqa: FBT001
+        """Allow to pass model strict."""
+        self.model_strict = model_strict
+
     @abc.abstractmethod
-    def validate(self, model_class: type[ModelT], form: BaseForm) -> ModelT:
+    def validate(
+        self,
+        model_class: type[ModelT],
+        form: BaseForm,
+    ) -> ModelT:
         """
         Validate form data against the given model class.
 
@@ -33,7 +42,7 @@ class BaseBackend(abc.ABC):
     def attach_errors(
         self,
         form: BaseForm,
-        exc: Exception,
+        exc: ValidationBackendError,
         *args: Any,
         **kwargs: Any,
     ) -> None:

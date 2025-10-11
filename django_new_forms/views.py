@@ -1,4 +1,4 @@
-from typing import Generic
+from typing import ClassVar, Generic
 
 from django.forms.forms import BaseForm
 from django.http import HttpRequest, HttpResponse
@@ -10,7 +10,7 @@ from typing_extensions import Any
 from django_new_forms.backends import BaseBackend
 from django_new_forms.exceptions import ValidationBackendError
 from django_new_forms.settings import get_backend
-from django_new_forms.typing import ModelT
+from django_new_forms.typing import FormT, ModelT
 
 
 class ProcessFormView(Generic[ModelT], View):
@@ -24,7 +24,7 @@ class ProcessFormView(Generic[ModelT], View):
     """
 
     model_class: type[ModelT]
-    model_strict: bool = True
+    model_strict: ClassVar[bool] = False
 
     def post(
         self,
@@ -34,13 +34,13 @@ class ProcessFormView(Generic[ModelT], View):
     ) -> HttpResponse:
         """Process form submission with external `validation_backend`."""
         form = self.get_form()  # type: ignore[attr-defined]
-        backend = self.backend()
+        backend = self.backend(self.model_strict)
 
         try:
             model = backend.validate(self.model_class, form)
         except ValidationBackendError as exc:
             backend.attach_errors(form, exc)
-            return self.form_invalid(form)  # type: ignore[attr-defined]
+            return self.form_invalid(form)  # type: ignore[attr-defined, no-any-return]
         else:
             return self.model_valid(model, form)
 
@@ -51,7 +51,7 @@ class ProcessFormView(Generic[ModelT], View):
         Called when form validation succeeds. Delegates to Django's
         `form_valid()` method for standard form processing.
         """
-        return self.form_valid(form)  # type: ignore[attr-defined]
+        return self.form_valid(form)  # type: ignore[attr-defined, no-any-return]
 
     @property
     def backend(self) -> type[BaseBackend]:
@@ -64,9 +64,14 @@ class ProcessFormView(Generic[ModelT], View):
         return get_backend()
 
 
-class BaseFormView(FormMixin, ProcessFormView[ModelT]):
+class BaseFormView(FormMixin[FormT], ProcessFormView[ModelT]):
     """A base view for displaying a form."""
 
+    form_class: type[FormT]
 
-class FormView(TemplateResponseMixin, BaseFormView):
+
+class FormView(
+    TemplateResponseMixin,
+    BaseFormView[FormT, ModelT],
+):
     """A view for displaying a form and rendering a template response."""

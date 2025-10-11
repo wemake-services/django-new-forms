@@ -10,3 +10,7 @@ class ValidationBackendError(Exception):
     validation errors (such as `pydantic.ValidationError`) and
     Django's form validation system.
     """
+
+    def __init__(self, original_exc: Exception) -> None:
+        """Allow to pass original exception."""
+        self.original_exc = original_exc
