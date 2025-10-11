@@ -8,31 +8,37 @@ name = "django-new-forms"
 description = "Django forms validation using additional backends"
 repository = "https://github.com/wemake-services/django-new-forms"
 version = "0.1.0"
-requires-python = ">=3.10,<3.14"
-readme = "README.md"
-license = { text = "MIT" }
-dynamic = ["dependencies", "classifiers"]
+license = "MIT"
 
 authors = [
   { name = "Nikita Sobolev", email = "mail@sobolevn.me" },
   { name = "Alexander Kondratev", email = "kondratev.av@inbox.ru"}
 ]
+
+readme = "README.md"
+
 keywords = [
   "django",
+  "django plugin",
   "forms",
   "pydantic",
   "msgspec",
+  "wemake-python-package",
 ]
 
 
 [tool.poetry]
 classifiers = [
   "Development Status :: 3 - Alpha",
-  "Environment :: Web Environment",
-  "Framework :: Django",
   "Intended Audience :: Developers",
   "Operating System :: OS Independent",
+  "Environment :: Web Environment",
   "Topic :: Software Development :: Libraries :: Python Modules",
+  "Framework :: Django",
+  "Framework :: Django :: 4.2",
+  "Framework :: Django :: 5.0",
+  "Framework :: Django :: 5.1",
+  "Framework :: Django :: 5.2",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
@@ -40,21 +46,18 @@ classifiers = [
 ]
 
 [tool.poetry.dependencies]
+python = "^3.10"
 typing_extensions = ">=4.0"
+pydantic = { version = "^2.12", optional = true }
 
-[project.optional-dependencies]
-pydantic = [
-    "pydantic>=2.11.9",
-]
-msgspec = [
-    "msgspec>=0.19.0",
-]
+[tool.poetry.extras]
+pydantic = ["pydantic"]
 
 [tool.poetry.group.dev.dependencies]
 django = ">=4.2,<6.0"
+django-stubs = { version = "5.2.7", extras = ["compatible-mypy"] }
 
 mypy = "^1.18"
-django-stubs = "^5.2.5"
 
 wemake-python-styleguide = "^1.4"
 ruff = "^0.13"
@@ -153,6 +156,9 @@ flake8-quotes.inline-quotes = "single"
 mccabe.max-complexity = 6
 pydocstyle.convention = "google"
 
+# For `django_test_app` only:
+isort.known-first-party = ["new_forms"]
+
 [tool.ruff.lint.per-file-ignores]
 # Allow import aliases without rename:
 "django_new_forms/backends/__init__.py" = ["PLC0414"]
@@ -161,12 +167,18 @@ pydocstyle.convention = "google"
 
 
 [tool.pytest.ini_options]
-# pytest config: http://doc.pytest.org/en/latest/customize.html
+# Django options:
+# https://pytest-django.readthedocs.io/en/latest/
+DJANGO_SETTINGS_MODULE = "django_test_app.settings"
 
+# pytest config: http://doc.pytest.org/en/latest/customize.html
 # Strict `@xfail` by default:
 xfail_strict = true
 # Fail on warnings:
 filterwarnings = ["error"]
+
+# PYTHONPATH configuration:
+pythonpath = ["django_test_app"]
 
 addopts = [
   "--strict-config",
@@ -206,4 +218,8 @@ enable_error_code = [
   "mutable-override",
   "unimported-reveal",
   "deprecated",
+]
+
+plugins = [
+  "pydantic.mypy",
 ]
