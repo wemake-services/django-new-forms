@@ -60,7 +60,7 @@ django-stubs = { version = "5.2.7", extras = ["compatible-mypy"] }
 mypy = "^1.18"
 
 wemake-python-styleguide = "^1.4"
-ruff = "^0.13"
+ruff = "^0.14"
 
 pytest = "^8.4"
 pytest-cov = "^7.0"
