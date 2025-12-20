@@ -60,7 +60,7 @@ django-stubs = { version = "5.2.7", extras = ["compatible-mypy"] }
 mypy = "^1.18"
 
 wemake-python-styleguide = "^1.4"
-ruff = "^0.13"
+ruff = "^0.14"
 
 pytest = "^8.4"
 pytest-cov = "^7.0"
@@ -73,7 +73,7 @@ optional = true
 [tool.poetry.group.docs.dependencies]
 sphinx = "^8.1"
 sphinx-autodoc-typehints = "^3.0"
-tomli = "^2.2"
+tomli = "^2.3"
 myst-parser = "^4.0"
 furo = "^2025.9"
 
