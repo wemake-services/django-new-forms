@@ -7,10 +7,10 @@ except ImportError:  # pragma: no cover
     )
     raise
 
-from typing import Any
+from typing import Any, final
 
 from django.forms import BaseForm, forms
-from typing_extensions import final, override
+from typing_extensions import override
 
 from django_new_forms.backends.base import BaseBackend
 from django_new_forms.exceptions import ValidationBackendError
@@ -67,7 +67,7 @@ class PydanticBackend(BaseBackend):
     ) -> ModelT:
         """Transform form data into pydantic model."""
         converted_values = self._query_dict(form)
-        return model_class.model_validate(
+        return model_class.model_validate(  # type: ignore[no-any-return, attr-defined]
             converted_values,
             strict=self.model_strict,
         )

@@ -1,4 +1,6 @@
-from typing_extensions import final
+from typing import final
+
+import pydantic
 
 
 @final
@@ -11,6 +13,7 @@ class ValidationBackendError(Exception):
     Django's form validation system.
     """
 
-    def __init__(self, original_exc: Exception) -> None:
+    # TODO: refactor
+    def __init__(self, original_exc: pydantic.ValidationError) -> None:
         """Allow to pass original exception."""
         self.original_exc = original_exc
