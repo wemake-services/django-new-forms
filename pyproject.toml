@@ -54,7 +54,7 @@ pydantic = ["pydantic"]
 
 [tool.poetry.group.dev.dependencies]
 django = ">=4.2,<6.0"
-django-stubs = { version = "5.2.7", extras = ["compatible-mypy"] }
+django-stubs = { version = "5.2.8", extras = ["compatible-mypy"] }
 django-stubs-ext = "^5.2"
 
 mypy = "^1.18"
