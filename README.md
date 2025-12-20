@@ -9,8 +9,12 @@ Django forms validation using additional backends
 
 ## Features
 
-- Fully typed with annotations and checked with mypy, [PEP561 compatible](https://www.python.org/dev/peps/pep-0561/)
-- Add yours!
+- [ ] Fully typed and checked with `mypy` and `pyright` in strict modes
+- [ ] Supports `pydantic2`, but not bound to it
+- [ ] Supports `msgspec`, but not bound to it
+- [ ] 100% test coverage
+- [ ] Great docs
+
 
 ## Installation
 
