@@ -1,11 +1,23 @@
 SHELL:=/usr/bin/env bash
 
+.PHONY: format
+format:
+	ruff format && ruff check && ruff format
+
 .PHONY: lint
 lint:
 	poetry run ruff check --exit-non-zero-on-fix
 	poetry run ruff format --check --diff
 	poetry run flake8 .
+
+.PHONY: type-check
+type-check:
 	poetry run mypy .
+	poetry run pyright
+
+.PHONY: spell-check
+spell-check:
+	poetry run codespell django_new_forms tests docs README.md CONTRIBUTING.md CHANGELOG.md
 
 .PHONY: unit
 unit:
@@ -13,8 +25,7 @@ unit:
 
 .PHONY: package
 package:
-	poetry check
 	poetry run pip check
 
 .PHONY: test
-test: lint package unit
+test: lint type-check spell-check unit package

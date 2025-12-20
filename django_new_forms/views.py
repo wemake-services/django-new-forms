@@ -36,12 +36,12 @@ class ProcessNewFormView(Generic[ModelT], View):
         backend = self.backend(self.model_strict)
 
         try:
-            model = backend.validate(self.model_class, form)
+            model = backend.validate(self.model_class, form)  # pyright: ignore[reportUnknownArgumentType]
         except ValidationBackendError as exc:
-            backend.attach_errors(form, exc)
+            backend.attach_errors(form, exc)  # pyright: ignore[reportUnknownArgumentType]
             return self.form_invalid(form)  # type: ignore[attr-defined, no-any-return]
         else:
-            return self.model_valid(model, form)
+            return self.model_valid(model, form)  # pyright: ignore[reportUnknownArgumentType]
 
     def model_valid(self, model: ModelT, form: BaseForm) -> HttpResponse:
         """

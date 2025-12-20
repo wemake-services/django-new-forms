@@ -83,7 +83,7 @@ class PydanticBackend(BaseBackend):
                 result_dict[field_name] = field_value
             else:
                 result_dict[field_name] = field_value[0]
-        return result_dict
+        return result_dict  # pyright: ignore[reportUnknownVariableType]
 
     @final
     def _is_multiple_field(self, form: BaseForm, field_name: str) -> bool:
