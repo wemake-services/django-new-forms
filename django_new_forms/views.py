@@ -1,11 +1,10 @@
-from typing import ClassVar, Generic
+from typing import Any, ClassVar, Generic
 
 from django.forms import BaseForm
 from django.http import HttpRequest, HttpResponse
 from django.views.generic import View
 from django.views.generic.base import TemplateResponseMixin
 from django.views.generic.edit import FormMixin
-from typing_extensions import Any
 
 from django_new_forms.backends import BaseBackend
 from django_new_forms.exceptions import ValidationBackendError
@@ -13,7 +12,7 @@ from django_new_forms.settings import get_backend
 from django_new_forms.typing import FormT, ModelT
 
 
-class ProcessFormView(Generic[ModelT], View):
+class ProcessNewFormView(Generic[ModelT], View):
     """
     Base view for processing forms with external validation backends.
 
@@ -64,14 +63,19 @@ class ProcessFormView(Generic[ModelT], View):
         return get_backend()
 
 
-class BaseFormView(FormMixin[FormT], ProcessFormView[ModelT]):
+class BaseNewFormView(
+    FormMixin[FormT],
+    ProcessNewFormView[ModelT],
+    Generic[FormT, ModelT],
+):
     """A base view for displaying a form."""
 
-    form_class: type[FormT]
+    form_class: type[FormT]  # type: ignore[mutable-override]
 
 
-class FormView(
+class NewFormView(
     TemplateResponseMixin,
-    BaseFormView[FormT, ModelT],
+    BaseNewFormView[FormT, ModelT],
+    Generic[FormT, ModelT],
 ):
     """A view for displaying a form and rendering a template response."""
