@@ -5,7 +5,7 @@
 [![Python Version](https://img.shields.io/pypi/pyversions/django-new-forms.svg)](https://pypi.org/project/django-new-forms/)
 [![wemake-python-styleguide](https://img.shields.io/badge/style-wemake-000000.svg)](https://github.com/wemake-services/wemake-python-styleguide)
 
-Django forms validation using additional backends
+Django forms validation using external serializers
 
 ## Features
 

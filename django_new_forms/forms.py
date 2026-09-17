@@ -1,60 +1,70 @@
 from collections.abc import Mapping
-from typing import Any, ClassVar, Generic, TypeVar, final, get_args, get_origin
+from typing import (
+    Any,
+    ClassVar,
+    Generic,
+    TypeVar,
+    final,
+    get_args,
+    get_origin,
+)
 
 from django import forms
 from django.core.exceptions import ValidationError
-from typing_extensions import get_original_bases, override
+from typing_extensions import Sentinel, get_original_bases, override
 
-from django_new_forms.backends import BaseBackend, ValidationIssue
 from django_new_forms.exceptions import (
     FormConfigurationError,
     ParsedDataUnavailableError,
 )
-from django_new_forms.typing import ModelT
+from django_new_forms.serializers import BaseSerializer, ValidationIssue
+from django_new_forms.typing import EMPTY, ModelT
 
 
 class ModernForm(forms.Form, Generic[ModelT]):  # noqa: WPS214
     """Render Django fields and validate their submitted values externally."""
 
-    backend: ClassVar[type[BaseBackend]]
-    model: ClassVar[Any]
-    strict: ClassVar[bool | None] = None
-    is_abstract: ClassVar[bool] = True
+    serializer: ClassVar[type[BaseSerializer]]
+    model: ClassVar[Any | Sentinel] = EMPTY
+    strict_validation: ClassVar[bool | None] = None
 
-    _parsed_data: ModelT
-    _has_parsed_data: bool
+    _parsed_data: ModelT | Sentinel
 
     @override
     def __init_subclass__(cls) -> None:
         """Resolve and validate form configuration at class creation time."""
         super().__init_subclass__()
         model = cls._infer_model()
-        if model is None:
-            cls.is_abstract = True
+        if model is EMPTY:
             return
 
-        backend = getattr(cls, 'backend', None)
+        serializer = getattr(cls, 'serializer', None)
         if (
-            not isinstance(backend, type)
-            or not issubclass(backend, BaseBackend)
-            or backend is BaseBackend
+            not isinstance(serializer, type)
+            or not issubclass(serializer, BaseSerializer)
+            or serializer is BaseSerializer
         ):
             raise FormConfigurationError(
-                f'{cls!r} must define a concrete BaseBackend subclass',
+                f'{cls!r} must define a concrete BaseSerializer subclass',
             )
 
-        backend.validate_model(model)
+        serializer.validate_model(model)
         cls.model = model
-        cls.is_abstract = False
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        """Create a form with no parsed model."""
+        super().__init__(*args, **kwargs)
+        self._parsed_data = EMPTY
 
     @property
     def parsed_data(self) -> ModelT:
         """Access to the externally parsed model after successful validation."""
-        if not getattr(self, '_has_parsed_data', False):
+        parsed_data = self._parsed_data
+        if parsed_data is EMPTY:
             raise ParsedDataUnavailableError(
                 'parsed_data is only available after successful validation',
             ) from None
-        return self._parsed_data
+        return parsed_data  # type: ignore[return-value]
 
     def provide_validation_data(self) -> Mapping[str, Any]:
         """Extract submitted widget values without Django field validation."""
@@ -79,7 +89,7 @@ class ModernForm(forms.Form, Generic[ModelT]):  # noqa: WPS214
         return validation_data
 
     def get_error_field(self, issue: ValidationIssue) -> str | None:
-        """Map a backend issue to a Django form field, when possible."""
+        """Map a serializer issue to a Django form field, when possible."""
         if issue.location:
             candidate = str(issue.location[0])
             if candidate in self.fields:
@@ -103,39 +113,38 @@ class ModernForm(forms.Form, Generic[ModelT]):  # noqa: WPS214
 
     @final
     def _clean_form(self) -> None:
-        """Run the configured external validation backend."""
-        if self.is_abstract:
+        """Run the configured external serializer validation."""
+        if self.model is EMPTY:
             raise FormConfigurationError(
                 f'{type(self)!r} is abstract and cannot validate data',
             )
 
-        self._has_parsed_data = False
+        self._parsed_data = EMPTY
 
         try:
-            parsed_data = self.backend.from_python(
+            parsed_data = self.serializer.from_python(
                 self.provide_validation_data(),
                 self.model,
-                strict=self.strict,
+                strict=self.strict_validation,
             )
-        except self.backend.validation_error as exc:
-            for issue in self.backend.normalize_validation_error(exc):
+        except self.serializer.validation_error as exc:
+            for issue in self.serializer.serialize_validation_error(exc):
                 self.add_error(
                     self.get_error_field(issue),
                     self.format_validation_issue(issue),
                 )
         else:
             self._parsed_data = parsed_data
-            self._has_parsed_data = True
 
     @final
     def _post_clean(self) -> None:
         """Skip Django's post-clean validation stage."""
 
     @classmethod
-    def _infer_model(cls) -> Any | None:
+    def _infer_model(cls) -> Any | Sentinel:
         """Infer the closest ``ModernForm`` model type argument."""
-        inherited_model = getattr(cls, 'model', None)
-        if inherited_model is not None:
+        inherited_model = getattr(cls, 'model', EMPTY)
+        if inherited_model is not EMPTY:
             return inherited_model
 
         for base in get_original_bases(cls):
@@ -148,6 +157,6 @@ class ModernForm(forms.Form, Generic[ModelT]):  # noqa: WPS214
             ):
                 model = arguments[0]
                 if isinstance(model, TypeVar):
-                    return None
+                    return EMPTY
                 return model
-        return None
+        return EMPTY

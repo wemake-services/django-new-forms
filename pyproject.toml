@@ -5,7 +5,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "django-new-forms"
-description = "Django forms validation using additional backends"
+description = "Django forms validation using external serializers"
 version = "0.1.0"
 license = "MIT"
 requires-poetry = ">=2.2"
@@ -182,8 +182,8 @@ pydocstyle.convention = "google"
 isort.known-first-party = ["new_forms"]
 
 [tool.ruff.lint.per-file-ignores]
-# Allow import aliases without rename:
-"django_new_forms/backends/__init__.py" = ["useless-import-alias"]
+# Allow public re-exports:
+"django_new_forms/serializers/__init__.py" = ["useless-import-alias"]
 # Allow `assert`s in tests:
 "tests/*.py" = ["assert"]
 

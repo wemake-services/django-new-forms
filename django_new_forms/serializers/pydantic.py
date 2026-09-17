@@ -11,10 +11,10 @@ from typing import Any, ClassVar
 
 from typing_extensions import override
 
-from django_new_forms.backends.base import BaseBackend, ValidationIssue
+from django_new_forms.serializers.base import BaseSerializer, ValidationIssue
 
 
-class PydanticBackend(BaseBackend):
+class PydanticSerializer(BaseSerializer):
     """Validate submitted values with a Pydantic type adapter."""
 
     validation_error: ClassVar[type[Exception]] = pydantic.ValidationError
@@ -42,11 +42,11 @@ class PydanticBackend(BaseBackend):
 
     @classmethod
     @override
-    def normalize_validation_error(
+    def serialize_validation_error(
         cls,
         exc: Exception,
     ) -> Sequence[ValidationIssue]:
-        """Convert a Pydantic error into backend-independent issues."""
+        """Convert a Pydantic error into serializer-independent issues."""
         if not isinstance(exc, pydantic.ValidationError):
             raise TypeError(
                 f'Expected pydantic.ValidationError, got {type(exc)!r}',

@@ -6,7 +6,7 @@ from typing import Any, ClassVar
 
 @dataclass(frozen=True, slots=True)
 class ValidationIssue:
-    """Backend-independent representation of a validation error."""
+    """Serializer-independent representation of a validation error."""
 
     location: tuple[str | int, ...]
     message: str
@@ -14,7 +14,7 @@ class ValidationIssue:
     context: Mapping[str, Any] | None = None
 
 
-class BaseBackend(abc.ABC):
+class BaseSerializer(abc.ABC):
     """Convert submitted Python values into a validated model."""
 
     validation_error: ClassVar[type[Exception]]
@@ -22,7 +22,7 @@ class BaseBackend(abc.ABC):
     @classmethod
     @abc.abstractmethod
     def validate_model(cls, model: Any) -> None:
-        """Check that this backend supports the given model type."""
+        """Check that this serializer supports the given model type."""
         raise NotImplementedError
 
     @classmethod
@@ -39,9 +39,9 @@ class BaseBackend(abc.ABC):
 
     @classmethod
     @abc.abstractmethod
-    def normalize_validation_error(
+    def serialize_validation_error(
         cls,
         exc: Exception,
     ) -> Sequence[ValidationIssue]:
-        """Convert a backend-specific error into validation issues."""
+        """Convert a serializer-specific error into validation issues."""
         raise NotImplementedError
