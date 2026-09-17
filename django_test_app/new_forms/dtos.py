@@ -1,6 +1,4 @@
-"""Pydantic schemas for form validation."""
-
-from typing import Final
+from typing import Final, final
 
 import pydantic
 
@@ -11,6 +9,7 @@ _MIN_AGE: Final = 0
 _MAX_AGE: Final = 120
 
 
+@final
 class ContactDTO(pydantic.BaseModel):
     """DTO for contact information."""
 

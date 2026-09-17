@@ -1,19 +1,11 @@
 from typing import final
 
-import pydantic
+
+@final
+class FormConfigurationError(TypeError):
+    """Raised when a concrete modern form is configured incorrectly."""
 
 
 @final
-class ValidationBackendError(Exception):
-    """
-    Exception raised when validation fails in the backend.
-
-    This exception serves as a bridge between backend-specific
-    validation errors (such as `pydantic.ValidationError`) and
-    Django's form validation system.
-    """
-
-    # TODO: refactor
-    def __init__(self, original_exc: pydantic.ValidationError) -> None:
-        """Allow to pass original exception."""
-        self.original_exc = original_exc
+class ParsedDataUnavailableError(AttributeError):
+    """Raised when parsed data is requested before successful validation."""

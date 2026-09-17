@@ -2,8 +2,12 @@
 
 from django import forms
 
+from django_new_forms.pydantic import PydanticForm
 
-class ContactForm(forms.Form):
+from .dtos import ContactDTO
+
+
+class ContactForm(PydanticForm[ContactDTO]):
     """Form for contact information."""
 
     name = forms.CharField()

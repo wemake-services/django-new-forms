@@ -1,94 +1,65 @@
 try:
     import pydantic
 except ImportError:  # pragma: no cover
-    print(  # noqa: WPS421
-        'Looks like `pydantic` is not installed, '
-        "consider using `pip install 'django-new-forms[pydantic]'`",
-    )
-    raise
+    raise ImportError(
+        'Pydantic support requires the pydantic extra: '
+        "pip install 'django-new-forms[pydantic]'",
+    ) from None
 
-from typing import Any, final
+from collections.abc import Mapping, Sequence
+from typing import Any, ClassVar
 
-from django.forms import BaseForm, forms
 from typing_extensions import override
 
-from django_new_forms.backends.base import BaseBackend
-from django_new_forms.exceptions import ValidationBackendError
-from django_new_forms.typing import ModelT
+from django_new_forms.backends.base import BaseBackend, ValidationIssue
 
 
-@final
 class PydanticBackend(BaseBackend):
-    """
-    Pydantic validation backend for `django-new-forms`.
+    """Validate submitted values with a Pydantic type adapter."""
 
-    This backend integrates `Pydantic` models with Django `forms`,
-    allowing you to validate form data against Pydantic models
-    and convert Pydantic validation errors into Django form errors.
-    """
+    validation_error: ClassVar[type[Exception]] = pydantic.ValidationError
 
+    @classmethod
     @override
-    def validate(
-        self,
-        model_class: type[ModelT],
-        form: BaseForm,
-    ) -> ModelT:
-        """Validate form data against a Pydantic model."""
-        try:
-            return self._validate_data(model_class, form)
-        except pydantic.ValidationError as exc:
-            raise ValidationBackendError(exc) from exc
+    def validate_model(cls, model: Any) -> None:
+        """Ensure that Pydantic can build a validator for ``model``."""
+        pydantic.TypeAdapter(model)
 
+    @classmethod
     @override
-    def attach_errors(
-        self,
-        form: forms.BaseForm,
-        exc: ValidationBackendError,
+    def from_python(
+        cls,
+        unstructured: Mapping[str, Any],
+        model: Any,
         *,
-        include_url: bool = False,  # TODO: handle params
-        include_context: bool = False,
-    ) -> None:
-        """Attaches pydantic validation errors to Django forms."""
-        for err in exc.original_exc.errors(
-            include_url=include_url,
-            include_context=include_context,
-        ):
-            form.add_error(
-                str(err['loc'][0]) if err['loc'] else None,
-                err['msg'],
-            )
-
-    # Private API:
-    @final
-    def _validate_data(
-        self,
-        model_class: type[ModelT],
-        form: BaseForm,
-    ) -> ModelT:
-        """Transform form data into pydantic model."""
-        converted_values = self._query_dict(form)
-        return model_class.model_validate(  # type: ignore[no-any-return, attr-defined]
-            converted_values,
-            strict=self.model_strict,
+        strict: bool | None,
+    ) -> Any:
+        """Parse submitted values into a Pydantic-supported model."""
+        return pydantic.TypeAdapter(model).validate_python(
+            unstructured,
+            strict=strict,
         )
 
-    @final
-    def _query_dict(self, form: BaseForm) -> dict[str, Any]:
-        """Convert Django form data to a dictionary."""
-        result_dict = {}
-        for field_name in form.data:
-            field_value = form.data.getlist(field_name)  # type: ignore[attr-defined]
-
-            if self._is_multiple_field(form, field_name):
-                result_dict[field_name] = field_value
-            else:
-                result_dict[field_name] = field_value[0]
-        return result_dict  # pyright: ignore[reportUnknownVariableType]
-
-    @final
-    def _is_multiple_field(self, form: BaseForm, field_name: str) -> bool:
-        """Check if a form field is a multiple choice field."""
-        return (
-            'MultipleChoice'
-            in form.fields.get(field_name).__class__.__qualname__
+    @classmethod
+    @override
+    def normalize_validation_error(
+        cls,
+        exc: Exception,
+    ) -> Sequence[ValidationIssue]:
+        """Convert a Pydantic error into backend-independent issues."""
+        if not isinstance(exc, pydantic.ValidationError):
+            raise TypeError(
+                f'Expected pydantic.ValidationError, got {type(exc)!r}',
+            )
+        return tuple(
+            ValidationIssue(
+                location=tuple(error['loc']),
+                message=error['msg'],
+                code=error['type'],
+                context=error.get('ctx'),
+            )
+            for error in exc.errors(
+                include_url=False,
+                include_context=True,
+            )
         )
