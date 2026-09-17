@@ -49,7 +49,7 @@ class ModernForm(forms.Form, Generic[ModelT]):  # noqa: WPS214
 
     @property
     def parsed_data(self) -> ModelT:
-        """Return the externally parsed model after successful validation."""
+        """Access to the externally parsed model after successful validation."""
         if not getattr(self, '_has_parsed_data', False):
             raise ParsedDataUnavailableError(
                 'parsed_data is only available after successful validation',

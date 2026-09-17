@@ -46,9 +46,9 @@ classifiers = [
 
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = ">=3.12,<3.15"
 typing_extensions = ">=4.0"
-django = ">=4.2,<6.0"
+django = ">=5.0,<6.2"
 
 msgspec = { version = ">= 0.19", optional = true }
 pydantic = { version = "^2.12", optional = true }
@@ -58,20 +58,20 @@ pydantic = ["pydantic"]
 msgspec = ["msgspec"]
 
 [tool.poetry.group.dev.dependencies]
-django = "^5.2"
-django-stubs = { version = "5.2.8", extras = ["compatible-mypy"] }
-django-stubs-ext = "^5.2"
+django = "^6.1"
+django-stubs = { version = "^6.1", extras = ["compatible-mypy"] }
+django-stubs-ext = "^6.1"
 
 pyright = "^1.1"
-mypy = "^1.19"
+mypy = "^2.3"
 
 wemake-python-styleguide = "^1.4"
-ruff = "^0.14"
+ruff = "^0.16"
 
 pytest = "^9.0"
 pytest-cov = "^7.0"
 pytest-django = "^4.11"
-pytest-randomly = "^4.0"
+pytest-randomly = "^5.0"
 
 codespell = "^2.4"
 
@@ -99,48 +99,52 @@ docstring-code-format = true
 
 [tool.ruff.lint]
 select = [
-  "A",    # flake8-builtins
-  "B",    # flake8-bugbear
-  "C4",   # flake8-comprehensions
-  "C90",  # maccabe
-  "COM",  # flake8-commas
-  "D",    # pydocstyle
-  "DTZ",  # flake8-datetimez
-  "E",    # pycodestyle
-  "ERA",  # flake8-eradicate
-  "EXE",  # flake8-executable
-  "F",    # pyflakes
-  "FBT",  # flake8-boolean-trap
-  "FLY",  # pyflint
-  "FURB", # refurb
-  "G",    # flake8-logging-format
-  "I",    # isort
-  "ICN",  # flake8-import-conventions
-  "ISC",  # flake8-implicit-str-concat
-  "LOG",  # flake8-logging
-  "N",    # pep8-naming
-  "PERF", # perflint
-  "PIE",  # flake8-pie
-  "PL",   # pylint
-  "PT",   # flake8-pytest-style
-  "PTH",  # flake8-use-pathlib
-  "Q",    # flake8-quotes
-  "RET",  # flake8-return
-  "RSE",  # flake8-raise
-  "RUF",  # ruff
-  "S",    # flake8-bandit
-  "SIM",  # flake8-simpify
-  "SLF",  # flake8-self
-  "SLOT", # flake8-slots
-  "T100", # flake8-debugger
-  "TRY",  # tryceratops
-  "UP",   # pyupgrade
-  "W",    # pycodestyle
-  "YTT",  # flake8-2020
+  "A",     # flake8-builtins
+  "ASYNC", # flake8-async
+  "B",     # flake8-bugbear
+  "C4",    # flake8-comprehensions
+  "C90",   # mccabe
+  "COM",   # flake8-commas
+  "D",     # pydocstyle
+  "DJ",    # flake8-django
+  "DTZ",   # flake8-datetimez
+  "E",     # pycodestyle
+  "ERA",   # flake8-eradicate
+  "EXE",   # flake8-executable
+  "F",     # pyflakes
+  "FBT",   # flake8-boolean-trap
+  "FLY",   # pyflint
+  "FURB",  # refurb
+  "G",     # flake8-logging-format
+  "I",     # isort
+  "ICN",   # flake8-import-conventions
+  "INT",   # flake8-gettext
+  "ISC",   # flake8-implicit-str-concat
+  "LOG",   # flake8-logging
+  "N",     # pep8-naming
+  "PERF",  # perflint
+  "PIE",   # flake8-pie
+  "PL",    # pylint
+  "PT",    # flake8-pytest-style
+  "PTH",   # flake8-use-pathlib
+  "Q",     # flake8-quotes
+  "RET",   # flake8-return
+  "RSE",   # flake8-raise
+  "RUF",   # ruff
+  "S",     # flake8-bandit
+  "SIM",   # flake8-simplify
+  "SLF",   # flake8-self
+  "SLOT",  # flake8-slots
+  "T100",  # flake8-debugger
+  "TID",   # flake8-tidy-imports
+  "TRY",   # tryceratops
+  "UP",    # pyupgrade
+  "W",     # pycodestyle
+  "YTT",   # flake8-2020
 ]
 ignore = [
-  "A005",   # allow to shadow stdlib and builtin module names
-  "COM812", # trailing comma, conflicts with `ruff format`
+  "A005",     # allow to shadow stdlib and builtin module names
+  "ASYNC119", # `contextlib.aclosing` is not detected
   # Different doc rules that we don't really care about:
   "D100",
   "D104",
@@ -150,12 +154,22 @@ ignore = [
   "D401",
   "D404",
   "D405",
-  "ISC001",  # implicit string concat conflicts with `ruff format`
-  "ISC003",  # prefer explicit string concat over implicit concat
-  "PLR09",   # we have our own complexity rules
-  "PLR2004", # do not report magic numbers
-  "PLR6301", # do not require classmethod / staticmethod when self not used
-  "TRY003",  # long exception messages from `tryceratops`
+  "D418",     # We should be able to add docstrings to `@overload` decorators
+  "D421",
+  "DJ008",    # we don't need `__str__` in models in tests
+  "ISC001",   # implicit string concat conflicts with `ruff format`
+  "ISC003",   # prefer explicit string concat over implicit concat
+  "PLC0414",  # do not raise on `as` re-exports
+  "PLR09",    # we have our own complexity rules
+  "PLR2004",  # do not report magic numbers
+  "PLR6301",  # do not require classmethod / staticmethod when self not used
+  "PLW2901",  # allow to redefine iteration targets in for loops
+  "RUF029",   # we decide `async` functions based on API, not `await` usage
+  "RUF067",   # wps handles `__init__.py` logic better
+  "RUF105",   # keep old `# noqa` comments style, not `# ruff` comments
+  "RUF106",   # we prefer old error codes
+  "RUF201",   # keep old rule codes instead of verbose names
+  "TRY003",   # long exception messages from `tryceratops`
 ]
 external = [ "WPS" ]
 
@@ -169,9 +183,9 @@ isort.known-first-party = ["new_forms"]
 
 [tool.ruff.lint.per-file-ignores]
 # Allow import aliases without rename:
-"django_new_forms/backends/__init__.py" = ["PLC0414"]
+"django_new_forms/backends/__init__.py" = ["useless-import-alias"]
 # Allow `assert`s in tests:
-"tests/*.py" = ["S101"]
+"tests/*.py" = ["assert"]
 
 
 [tool.pytest.ini_options]
@@ -208,24 +222,22 @@ addopts = [
 
 [tool.mypy]
 # The mypy configurations: http://bit.ly/2zEl9WI
-ignore_missing_imports = true
+extra_checks = true
+strict_equality_for_none = true
 strict = true
-strict_bytes = true
-local_partial_types = true
-warn_unreachable = true
 
 enable_error_code = [
-  "truthy-bool",
-  "truthy-iterable",
-  "redundant-expr",
-  "unused-awaitable",
+  "deprecated",
+  "exhaustive-match",
+  "explicit-override",
   "ignore-without-code",
   "possibly-undefined",
+  "redundant-expr",
   "redundant-self",
-  "explicit-override",
-  "mutable-override",
+  "truthy-bool",
+  "truthy-iterable",
   "unimported-reveal",
-  "deprecated",
+  "unused-awaitable",
 ]
 
 plugins = [
@@ -240,7 +252,16 @@ venvPath = "."
 venv = ".venv"
 
 
+
 [tool.codespell]
-# codespell configuration: https://pypi.org/project/codespell
-skip = '__pycache__,_build,.mypy_cache,swagger-*.js'
-ignore-words-list = "FormT"
+# codespell configuration: https://github.com/codespell-project/codespell
+skip = [
+  "*.css",
+  "*.js",
+  "*.lock",
+  "*.min.*",
+  "*.msgpack",
+  ".mypy_cache",
+  "__pycache__",
+  "_build",
+]
