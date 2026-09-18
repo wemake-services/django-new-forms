@@ -82,7 +82,7 @@ optional = true
 sphinx = "^8.1"
 sphinx-autodoc-typehints = "^3.0"
 tomli = "^2.3"
-myst-parser = "^4.0"
+myst-parser = ">=4,<6"
 furo = "^2025.9"
 
 
